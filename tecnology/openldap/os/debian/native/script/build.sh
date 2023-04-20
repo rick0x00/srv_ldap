@@ -23,6 +23,12 @@ fi
 domain_name="rick0x00.com.br"
 admin_password="admin"
 
+ldap_port[0]="389" # LDAP
+ldap_port[1]="636" # LDAP ssl
+
+workdir="/etc/ldap/"
+persistence_volumes=("/etc/ldap/" "/var/lib/ldap/")
+expose_ports="${ldap_port[0]}/tcp ${ldap_port[0]}/udp ${ldap_port[1]}/tcp ${ldap_port[1]}/udp"
 # end set variables
 # ============================================================ #
 # start definition functions
