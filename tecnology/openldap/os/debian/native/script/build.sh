@@ -38,8 +38,7 @@ expose_ports="${ldap_port[0]}/tcp ${ldap_port[0]}/udp ${ldap_port[1]}/tcp ${ldap
 # end complement functions
 # ============================== #
 # start main functions
-function install_openldap_server () {
-    apt update
+function pre_configure_server () {
     # debconf template: https://salsa.debian.org/openldap-team/openldap/-/blob/master/debian/slapd.templates
     # Omit OpenLDAP server configuration? = false
     echo "slapd slapd/no_configuration boolean false" | debconf-set-selections
@@ -54,10 +53,15 @@ function install_openldap_server () {
     echo "slapd slapd/purge_database boolean false" | debconf-set-selections
     # Move old database? = true
     echo "slapd slapd/move_old_database boolean true" | debconf-set-selections
+}
+
+function install_server () {
+    apt update
+    pre_configure_server;
     apt install -y slapd ldap-utils
 }
 
-function start_openldap_server () {
+function start_server () {
     systemctl enable --now slapd
     systemctl status slapd
     # /usr/sbin/slapd -d 2 -h "ldap:/// ldapi:///" -g openldap -u openldap -F /etc/ldap/slapd.d # execute inside docker container
@@ -72,5 +76,5 @@ function start_openldap_server () {
 # ============================================================ #
 # start main executions of code
 
-install_openldap_server;
-start_openldap_server;
+install_server;
+start_server;
